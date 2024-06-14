@@ -1,0 +1,27 @@
+name: Build and Push Frontend Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    env:
+      USERNAME: sangram0105 
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        run: echo ${{ secrets.GHCR_PAT }} | docker login ghcr.io -u ${{ env.USERNAME }} --password-stdin
+
+      - name: Build the Docker image
+        run: docker build -t ghcr.io/${{ env.USERNAME }}/frontend:latest .
+        working-directory: ./frontend
+
+      - name: Push the Docker image
+        run: docker push ghcr.io/${{ env.USERNAME }}/frontend:latest
